@@ -1,11 +1,9 @@
 package application
 
 import (
-	"fmt"
-	"net/http"
-	"time"
-
 	"github.com/Irurnnen/gin-template/internal/config"
+	"github.com/Irurnnen/gin-template/internal/logger"
+	"github.com/Irurnnen/gin-template/internal/server"
 )
 
 type Application struct {
@@ -15,24 +13,28 @@ type Application struct {
 
 func New() *Application {
 	return &Application{
-		Config: *config.NewConfigExample(),
+		Config: *config.NewConfig(),
 		Debug:  false,
 	}
 }
 
 func NewDebug() *Application {
 	return &Application{
-		Config: *config.NewConfigExample(),
+		Config: *config.NewConfig(),
 		Debug:  true,
 	}
 }
 
 func (a *Application) Run() error {
-	http.HandleFunc("/", greet)
-	err := http.ListenAndServe(":8080", nil)
-	return err
-}
+	// TODO: Init logger
+	logger := logger.New(a.Config.LogLevel, a.Debug)
 
-func greet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World! %s", time.Now())
+	// TODO: Init telemetry
+
+	// TODO: Init database
+	// TODO: Init cache
+	// TOTO: Init server
+	server := server.NewServer(&a.Config, logger, nil)
+
+	return server.Start()
 }

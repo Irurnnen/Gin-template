@@ -1,0 +1,22 @@
+services:
+  gin-template:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gin-template
+    restart: unless-stopped
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+    secrets:
+      - gin-template.yml
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT}/v1/internal/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+secrets:
+  gin-template.yml:
+    file: gin-template.yml

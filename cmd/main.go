@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"github.com/Irurnnen/gin-template/internal/application"
 )
 
 func main() {
-	fmt.Println("Hello world!")
+	app := application.New()
+	app.Run()
 }

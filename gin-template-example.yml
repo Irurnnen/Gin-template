@@ -1,0 +1,12 @@
+server:
+  host: localhost
+  port: 8080
+debug: true
+log_level: debug
+
+database:
+  host: localhost
+  port: 5432
+  user: user
+  password: password
+  dbname: mydb
