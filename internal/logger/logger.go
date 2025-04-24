@@ -18,28 +18,28 @@
 // the returned logger instance in the calling code to flush any buffered log entries.
 package logger
 
-import "go.uber.org/zap"
+import (
+	"go.uber.org/zap"
+)
 
-func New(LogLevel string, Debug bool) *zap.Logger {
-	logger, _ := zap.NewDevelopment()
-	if Debug {
-		logger = zap.NewExample()
-	} else {
-		logger, _ = zap.NewProduction()
-	}
-
+func New(LogLevel string) *zap.Logger {
+	var level zap.AtomicLevel
 	switch LogLevel {
 	case "debug":
-		logger = logger.WithOptions(zap.IncreaseLevel(zap.DebugLevel))
+		level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	case "info":
-		logger = logger.WithOptions(zap.IncreaseLevel(zap.InfoLevel))
+		level = zap.NewAtomicLevelAt(zap.InfoLevel)
 	case "warn":
-		logger = logger.WithOptions(zap.IncreaseLevel(zap.WarnLevel))
+		level = zap.NewAtomicLevelAt(zap.WarnLevel)
 	case "error":
-		logger = logger.WithOptions(zap.IncreaseLevel(zap.ErrorLevel))
+		level = zap.NewAtomicLevelAt(zap.ErrorLevel)
 	default:
-		logger = logger.WithOptions(zap.IncreaseLevel(zap.InfoLevel))
+		level = zap.NewAtomicLevelAt(zap.InfoLevel)
 	}
+
+	cfg := zap.NewProductionConfig()
+	cfg.Level = level
+	logger, _ := cfg.Build()
 	defer logger.Sync()
 	return logger
 }

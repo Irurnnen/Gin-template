@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -13,11 +15,21 @@ type Config struct {
 }
 
 type Database struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	DBName   string `yaml:"dbname"`
+	Host       string `yaml:"host"`
+	Port       int    `yaml:"port"`
+	User       string `yaml:"user"`
+	Password   string `yaml:"password"`
+	DBName     string `yaml:"db_name"`
+	Secure     bool   `yaml:"secure"`
+	DriverName string `yaml:"driver_name"`
+}
+
+func (d *Database) GetDSN() string {
+	DSN := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", d.User, d.Password, d.Host, d.Port, d.DBName)
+	if d.Secure {
+		return DSN
+	}
+	return DSN + "?sslmode=disable"
 }
 
 type Server struct {

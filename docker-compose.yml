@@ -11,11 +11,30 @@ services:
       - .env
     secrets:
       - gin-template.yml
+    depends_on:
+      template-db:
+        condition: service_healthy
+
+  template-db:
+    image: postgres:latest
+    container_name: template-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - template-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${PORT}/v1/internal/ping"]
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 3
+
+volumes:
+  template-db-data:
 
 secrets:
   gin-template.yml:
