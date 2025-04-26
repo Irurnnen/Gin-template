@@ -22,6 +22,11 @@ import (
 	"go.uber.org/zap"
 )
 
+func init() {
+	log, _ := zap.NewProduction()
+	zap.ReplaceGlobals(log)
+}
+
 func New(LogLevel string) *zap.Logger {
 	var level zap.AtomicLevel
 	switch LogLevel {
