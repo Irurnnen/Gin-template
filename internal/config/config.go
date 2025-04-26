@@ -8,20 +8,19 @@ import (
 )
 
 type Config struct {
-	Server   Server   `yaml:"host"`
-	Database Database `yaml:"database"`
-	LogLevel string   `yaml:"log_level"`
-	Debug    bool     `yaml:"debug"`
+	Server   Server   `mapstructure:"server"`
+	Database Database `mapstructure:"database"`
+	LogLevel string   `mapstructure:"log_level"`
+	Debug    bool     `mapstructure:"debug"`
 }
 
 type Database struct {
-	Host       string `yaml:"host"`
-	Port       int    `yaml:"port"`
-	User       string `yaml:"user"`
-	Password   string `yaml:"password"`
-	DBName     string `yaml:"db_name"`
-	Secure     bool   `yaml:"secure"`
-	DriverName string `yaml:"driver_name"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
+	DBName   string `mapstructure:"db_name"`
+	Secure   bool   `mapstructure:"secure"`
 }
 
 func (d *Database) GetDSN() string {
@@ -33,8 +32,8 @@ func (d *Database) GetDSN() string {
 }
 
 type Server struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
 }
 
 func NewConfigExample() *Config {
