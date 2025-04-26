@@ -11,6 +11,10 @@ import (
 	"go.uber.org/zap"
 )
 
+type ServerInterface interface {
+	Start() error
+}
+
 type Server struct {
 	config *config.Config
 	logger *zap.Logger
@@ -23,8 +27,8 @@ func NewServer(config *config.Config, logger *zap.Logger, repo *repository.Repos
 	router := gin.New()
 
 	// Setup hello
-	HelloRepository := repository.NewHelloRepository(repo.DB)
-	HelloService := services.NewHelloService(HelloRepository)
+	// // HelloRepository := repository.NewHelloRepository(repo.DB)
+	HelloService := services.NewHelloService(repo.HelloRepository)
 	HelloHandler := handler.NewHelloHandler(HelloService, logger)
 
 	// Add middlewares

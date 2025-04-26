@@ -1,25 +1,27 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	"github.com/Irurnnen/gin-template/internal/database"
+)
 
 type HelloRepository struct {
-	db *sqlx.DB
+	provider *database.Provider
 }
 
 type HelloRepositoryInterface interface {
 	GetHelloMessage() (string, error)
 }
 
-func NewHelloRepository(db *sqlx.DB) *HelloRepository {
+func NewHelloRepository(provider *database.Provider) *HelloRepository {
 	return &HelloRepository{
-		db: db,
+		provider: provider,
 	}
 }
 
 func (r *HelloRepository) GetHelloMessage() (string, error) {
 	var message string
 	query := "SELECT 'Hello World' AS message"
-	err := r.db.Get(&message, query)
+	err := r.provider.GetDB().Get(&message, query)
 	if err != nil {
 		return "", err
 	}

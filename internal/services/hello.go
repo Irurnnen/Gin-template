@@ -10,7 +10,7 @@ type HelloServiceInterface interface {
 	GetHelloMessage() (string, error)
 }
 
-func NewHelloService(repo *repository.HelloRepository) *HelloService {
+func NewHelloService(repo repository.HelloRepositoryInterface) *HelloService {
 	return &HelloService{
 		repo: repo,
 	}

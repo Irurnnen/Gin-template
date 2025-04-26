@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Irurnnen/gin-template/internal/application"
 	"github.com/Irurnnen/gin-template/internal/config"
+	"github.com/Irurnnen/gin-template/internal/database"
 	"github.com/Irurnnen/gin-template/internal/logger"
 	"github.com/Irurnnen/gin-template/internal/repository"
 	"github.com/Irurnnen/gin-template/internal/server"
@@ -16,17 +17,21 @@ func main() {
 	// Setup logger
 	log := logger.New(cfg.LogLevel)
 
-	// Setup database connection
-	repo, err := repository.NewRepository(cfg.Database.GetDSN())
+	// Setup database provider
+	dbProvider, err := database.NewProvider(cfg.Database.GetDSN())
 	if err != nil {
-		log.Fatal("Failed to initialize repository", zap.Error(err))
+		log.Fatal("Failed to initialize database provider", zap.Error(err))
 	}
+	defer dbProvider.Close()
 
 	// Ping database
-	if err := repo.Ping(); err != nil {
+	if err := dbProvider.Ping(); err != nil {
 		log.Fatal("Failed to ping database", zap.Error(err), zap.String("host", cfg.Database.Host))
 	}
 	log.Info("Database connection setup successfully")
+
+	// Initialize repository with database provider
+	repo := repository.NewRepository(dbProvider)
 
 	// Setup server
 	srv := server.NewServer(cfg, log, repo)
@@ -35,5 +40,7 @@ func main() {
 	app := application.New(cfg, log, repo, srv)
 
 	// Launch application
-	app.Run()
+	if err := app.Run(); err != nil {
+		log.Fatal("Application failed to run", zap.Error(err))
+	}
 }
