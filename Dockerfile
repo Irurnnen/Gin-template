@@ -15,7 +15,7 @@ ARG BUILD_TAG
 ENV GOCACHE=/root/.cache/go-build
 
 # --tags ${BUILD_TAG}  -buildvcs=false CGO_ENABLED=0 
-RUN --mount=type=cache,target="/root/.cache/go-build" GOOS=linux go build --ldflags="-s -w" -o /app/gin-template ./cmd/
+RUN --mount=type=cache,target="/root/.cache/go-build" GOOS=linux go build --ldflags="-s -w" -o /app/gin-template .
 
 
 FROM alpine:3.21.3 AS production-stage

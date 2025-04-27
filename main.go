@@ -16,6 +16,12 @@ import (
 	"go.uber.org/zap"
 )
 
+//	@title			Gin-template
+//	@version		0.0.1
+//	@description	This is a sample server celler server.
+
+//	@host		localhost:8080
+//	@BasePath	/v1
 func main() {
 	// Read config
 	cfg := config.NewConfig()
