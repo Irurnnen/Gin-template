@@ -23,7 +23,7 @@ type Server struct {
 
 func NewServer(cfg *config.ServerConfig, logger *zap.Logger, helloHandler handler.HelloHandlerInterface) *Server {
 	// Create a new Gin router instance
-	gin.SetMode(gin.ReleaseMode)
+
 	router := gin.New()
 
 	// Add middlewares

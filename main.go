@@ -13,6 +13,7 @@ import (
 	"github.com/Irurnnen/gin-template/internal/repository"
 	"github.com/Irurnnen/gin-template/internal/server"
 	"github.com/Irurnnen/gin-template/internal/services"
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
@@ -20,8 +21,8 @@ import (
 //	@version		0.0.1
 //	@description	This is a sample server celler server.
 
-//	@host		localhost:8080
-//	@BasePath	/v1
+// @host		localhost:8080
+// @BasePath	/v1
 func main() {
 	// Read config
 	cfg := config.NewConfig()
@@ -47,6 +48,13 @@ func main() {
 	// Initialize Hello handler
 	HelloService := services.NewHelloService(repo.HelloRepository, log)
 	HelloHandler := handler.NewHelloHandler(HelloService, log)
+
+	// Setup gin level
+	if cfg.Debug {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	// Setup server
 	srv := server.NewServer(cfg.ServerConfig, log, HelloHandler)
