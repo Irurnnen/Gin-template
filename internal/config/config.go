@@ -8,13 +8,13 @@ import (
 )
 
 type Config struct {
-	Server   Server   `mapstructure:"server"`
-	Database Database `mapstructure:"database"`
-	LogLevel string   `mapstructure:"log_level"`
-	Debug    bool     `mapstructure:"debug"`
+	ServerConfig   *ServerConfig   `mapstructure:"server"`
+	DatabaseConfig *DatabaseConfig `mapstructure:"database"`
+	LogLevel       string          `mapstructure:"log_level"`
+	Debug          bool            `mapstructure:"debug"`
 }
 
-type Database struct {
+type DatabaseConfig struct {
 	Host     string `mapstructure:"host"`
 	Port     int    `mapstructure:"port"`
 	User     string `mapstructure:"user"`
@@ -23,7 +23,7 @@ type Database struct {
 	Secure   bool   `mapstructure:"secure"`
 }
 
-func (d *Database) GetDSN() string {
+func (d *DatabaseConfig) GetDSN() string {
 	DSN := fmt.Sprintf("postgresql://%s:%s@%s:%d/%s", d.User, d.Password, d.Host, d.Port, d.DBName)
 	if d.Secure {
 		return DSN
@@ -31,18 +31,18 @@ func (d *Database) GetDSN() string {
 	return DSN + "?sslmode=disable"
 }
 
-type Server struct {
+type ServerConfig struct {
 	Host string `mapstructure:"host"`
 	Port int    `mapstructure:"port"`
 }
 
 func NewConfigExample() *Config {
 	return &Config{
-		Server: Server{
+		ServerConfig: &ServerConfig{
 			Host: "0.0.0.0",
 			Port: 8080,
 		},
-		Database: Database{
+		DatabaseConfig: &DatabaseConfig{
 			Host:     "hostname",
 			Port:     5432,
 			User:     "user",

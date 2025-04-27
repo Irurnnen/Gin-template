@@ -23,5 +23,8 @@ func NewHelloService(repo repository.HelloRepositoryInterface, logger *zap.Logge
 
 func (s *HelloService) GetHelloMessage() (string, error) {
 	message, err := s.repo.GetHelloMessage()
-	return message, err
+	if err != nil {
+		return "", err
+	}
+	return message, nil
 }

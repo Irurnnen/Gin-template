@@ -7,8 +7,6 @@ import (
 
 	"github.com/Irurnnen/gin-template/internal/config"
 	"github.com/Irurnnen/gin-template/internal/handler"
-	"github.com/Irurnnen/gin-template/internal/repository"
-	"github.com/Irurnnen/gin-template/internal/services"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -19,21 +17,14 @@ type ServerInterface interface {
 }
 
 type Server struct {
-	config *config.Config
-	logger *zap.Logger
-	server *http.Server
-	router *gin.Engine
-	// repo   *repository.Repository
+	logger     *zap.Logger
+	httpServer *http.Server
 }
 
-func NewServer(config *config.Config, logger *zap.Logger, repo *repository.Repository) *Server {
+func NewServer(cfg *config.ServerConfig, logger *zap.Logger, helloHandler handler.HelloHandlerInterface) *Server {
 	// Create a new Gin router instance
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
-
-	// Setup hello
-	HelloService := services.NewHelloService(repo.HelloRepository, logger)
-	HelloHandler := handler.NewHelloHandler(HelloService, logger)
 
 	// Add middlewares
 	router.Use(
@@ -52,26 +43,23 @@ func NewServer(config *config.Config, logger *zap.Logger, repo *repository.Repos
 			})
 		}
 
-		v1.GET("/hello", HelloHandler.GetHelloMessage)
+		v1.GET("/hello", helloHandler.GetHelloMessage)
 	}
 
 	logger.Debug("Router initialized")
 
 	return &Server{
-		config: config,
 		logger: logger,
-		// router: router,
-		server: &http.Server{
-			Addr:    ":" + strconv.Itoa(config.Server.Port),
+		httpServer: &http.Server{
+			Addr:    cfg.Host + ":" + strconv.Itoa(cfg.Port),
 			Handler: router.Handler(),
 		},
 	}
 }
 
 func (s *Server) Start() error {
-	s.logger.Info("Starting server", zap.String("port", strconv.Itoa(s.config.Server.Port)))
-
-	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	s.logger.Info("Starting server", zap.String("address", s.httpServer.Addr))
+	if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		s.logger.Error("Server failed to start", zap.Error(err))
 		return err
 	}
@@ -80,7 +68,9 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
-	if err := s.server.Shutdown(ctx); err != nil {
+	s.logger.Info("Shutting down server...")
+	if err := s.httpServer.Shutdown(ctx); err != nil {
+		s.logger.Error("Server failed to shutdown", zap.Error(err))
 		return err
 	}
 	return nil

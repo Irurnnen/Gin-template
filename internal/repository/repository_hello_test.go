@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/Irurnnen/gin-template/internal/database"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
@@ -21,9 +20,8 @@ func TestHelloRepository_GetHelloMessage(t *testing.T) {
 	mock.ExpectQuery("SELECT 'Hello World' AS message").WillReturnRows(rows)
 
 	// Initialize repository
-	provider := database.NewProviderDB(sqlx.NewDb(db, "sqlmock"))
 	logger := zap.NewNop()
-	repo := NewHelloRepository(provider, logger)
+	repo := NewHelloRepository(sqlx.NewDb(db, "sqlmock"), logger)
 
 	// Call method
 	message, err := repo.GetHelloMessage()

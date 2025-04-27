@@ -7,12 +7,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Irurnnen/gin-template/internal/application"
 	"github.com/Irurnnen/gin-template/internal/config"
-	"github.com/Irurnnen/gin-template/internal/database"
+	"github.com/Irurnnen/gin-template/internal/handler"
 	"github.com/Irurnnen/gin-template/internal/logger"
 	"github.com/Irurnnen/gin-template/internal/repository"
 	"github.com/Irurnnen/gin-template/internal/server"
+	"github.com/Irurnnen/gin-template/internal/services"
 	"go.uber.org/zap"
 )
 
@@ -24,39 +24,36 @@ func main() {
 	log := logger.New(cfg.LogLevel)
 	log.Info("Logger setup successfully")
 
-	// Setup database provider
-	dbProvider, err := database.NewProvider(cfg.Database.GetDSN())
+	// Initialize database
+	repo, err := repository.NewRepository(cfg.DatabaseConfig.GetDSN(), log)
 	if err != nil {
-		log.Fatal("Failed to initialize database provider", zap.Error(err))
+		log.Fatal("Failed to initialize database", zap.Error(err))
 	}
-	defer dbProvider.Close()
-	log.Info("Database provider setup successfully")
+	log.Info("Database setup successfully")
+	defer repo.Close()
 
 	// Ping database
-	if err := dbProvider.Ping(); err != nil {
-		log.Fatal("Failed to ping database", zap.Error(err), zap.String("host", cfg.Database.Host))
+	if err := repo.Ping(); err != nil {
+		log.Fatal("Failed to ping database", zap.Error(err), zap.String("host", cfg.DatabaseConfig.Host))
 	}
 	log.Info("Database connection ping successfully")
 
-	// Initialize repository with database provider
-	repo := repository.NewRepository(dbProvider, log)
-	log.Debug("Repository created successful")
+	// Initialize Hello handler
+	HelloService := services.NewHelloService(repo.HelloRepository, log)
+	HelloHandler := handler.NewHelloHandler(HelloService, log)
 
 	// Setup server
-	srv := server.NewServer(cfg, log, repo)
+	srv := server.NewServer(cfg.ServerConfig, log, HelloHandler)
 	log.Debug("Server created successfully")
-
-	// Create application
-	app := application.New(cfg, log, repo, srv)
-	log.Debug("Application created successfully")
 
 	// Launch application
 	go func() {
-		if err := app.Run(); err != nil {
+		if err := srv.Start(); err != nil {
 			log.Fatal("Application failed to run", zap.Error(err))
 		}
 	}()
 
+	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGKILL)
 	<-quit
@@ -64,7 +61,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := app.Shutdown(ctx); err != nil {
+	if err := srv.Shutdown(ctx); err != nil {
 		log.Error("Server shutdown", zap.Error(err))
 	}
 
