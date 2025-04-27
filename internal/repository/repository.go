@@ -6,12 +6,12 @@ import (
 )
 
 type Repository struct {
-	provider        *database.Provider
+	provider        database.ProviderInterface
 	logger          *zap.Logger
 	HelloRepository HelloRepositoryInterface
 }
 
-func NewRepository(provider *database.Provider, logger *zap.Logger) *Repository {
+func NewRepository(provider database.ProviderInterface, logger *zap.Logger) *Repository {
 	return &Repository{
 		provider:        provider,
 		logger:          logger,

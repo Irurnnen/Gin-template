@@ -8,6 +8,12 @@ import (
 const DriverName = "pgx"
 
 // Provider represents database connection provider
+type ProviderInterface interface {
+	GetDB() *sqlx.DB
+	Ping() error
+	Close() error
+}
+
 type Provider struct {
 	db *sqlx.DB
 }
@@ -20,6 +26,12 @@ func NewProvider(dsn string) (*Provider, error) {
 	}
 
 	return &Provider{db: db}, nil
+}
+
+func NewProviderDB(db *sqlx.DB) *Provider {
+	return &Provider{
+		db: db,
+	}
 }
 
 // GetDB returns database connection

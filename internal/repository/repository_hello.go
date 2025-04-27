@@ -6,7 +6,7 @@ import (
 )
 
 type HelloRepository struct {
-	provider *database.Provider
+	provider database.ProviderInterface
 	logger   *zap.Logger
 }
 
@@ -14,7 +14,7 @@ type HelloRepositoryInterface interface {
 	GetHelloMessage() (string, error)
 }
 
-func NewHelloRepository(provider *database.Provider, logger *zap.Logger) *HelloRepository {
+func NewHelloRepository(provider database.ProviderInterface, logger *zap.Logger) *HelloRepository {
 	return &HelloRepository{
 		provider: provider,
 		logger:   logger,
