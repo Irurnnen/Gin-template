@@ -27,6 +27,14 @@ func NewRepository(DSN string, logger *zap.Logger) (*Repository, error) {
 	}, nil
 }
 
+func NewRepositoryDB(db *sqlx.DB, logger *zap.Logger) *Repository {
+	return &Repository{
+		db:              db,
+		logger:          logger,
+		HelloRepository: NewHelloRepository(db, logger),
+	}
+}
+
 func (r *Repository) Ping() error {
 	return r.db.Ping()
 }
