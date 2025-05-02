@@ -13,6 +13,7 @@ import (
 	"github.com/Irurnnen/gin-template/internal/repository"
 	"github.com/Irurnnen/gin-template/internal/server"
 	"github.com/Irurnnen/gin-template/internal/services"
+	"github.com/Irurnnen/gin-template/internal/telemetry"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -44,6 +45,10 @@ func main() {
 		log.Fatal("Failed to ping database", zap.Error(err), zap.String("host", cfg.DatabaseConfig.Host))
 	}
 	log.Info("Database connection ping successfully")
+
+	// Initialize telemetry
+	shutdown, err := telemetry.SetupOTelSDK(context.Background(), cfg.OpenTelemetry)
+	defer shutdown(context.Background())
 
 	// Initialize Hello handler
 	HelloService := services.NewHelloService(repo.HelloRepository, log)

@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	ServerConfig   *ServerConfig   `mapstructure:"server"`
-	DatabaseConfig *DatabaseConfig `mapstructure:"database"`
-	LogLevel       string          `mapstructure:"log_level"`
-	Debug          bool            `mapstructure:"debug"`
+	ServerConfig   *ServerConfig        `mapstructure:"server"`
+	DatabaseConfig *DatabaseConfig      `mapstructure:"database"`
+	OpenTelemetry  *OpenTelemetryConfig `mapstructure:"opentelemetry"`
+	LogLevel       string               `mapstructure:"log_level"`
+	Debug          bool                 `mapstructure:"debug"`
 }
 
 type DatabaseConfig struct {
@@ -21,6 +22,27 @@ type DatabaseConfig struct {
 	Password string `mapstructure:"password"`
 	DBName   string `mapstructure:"db_name"`
 	Secure   bool   `mapstructure:"secure"`
+}
+
+type OpenTelemetryConfig struct {
+	Metrics MetricsConfig `mapstructure:"metrics"`
+	Traces  TracesConfig  `mapstructure:"traces"`
+	Logs    LogsConfig    `mapstructure:"logs"`
+}
+
+type MetricsConfig struct {
+	Enabled  bool   `mapstructure:"enabled"`
+	Endpoint string `mapstructure:"endpoint"`
+}
+
+type TracesConfig struct {
+	Enabled  bool   `mapstructure:"enabled"`
+	Endpoint string `mapstructure:"endpoint"`
+}
+
+type LogsConfig struct {
+	Enabled  bool   `mapstructure:"enabled"`
+	Endpoint string `mapstructure:"endpoint"`
 }
 
 func (d *DatabaseConfig) GetDSN() string {
