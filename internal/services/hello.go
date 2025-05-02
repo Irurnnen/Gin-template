@@ -1,7 +1,10 @@
 package services
 
 import (
+	"context"
+
 	"github.com/Irurnnen/gin-template/internal/repository"
+	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
 )
 
@@ -11,7 +14,7 @@ type HelloService struct {
 }
 
 type HelloServiceInterface interface {
-	GetHelloMessage() (string, error)
+	GetHelloMessage(ctx context.Context) (string, error)
 }
 
 func NewHelloService(repo repository.HelloRepositoryInterface, logger *zap.Logger) *HelloService {
@@ -21,8 +24,11 @@ func NewHelloService(repo repository.HelloRepositoryInterface, logger *zap.Logge
 	}
 }
 
-func (s *HelloService) GetHelloMessage() (string, error) {
-	message, err := s.repo.GetHelloMessage()
+func (s *HelloService) GetHelloMessage(ctx context.Context) (string, error) {
+	ctx, span := otel.Tracer("service").Start(ctx, "GetHelloMessage")
+	defer span.End()
+
+	message, err := s.repo.GetHelloMessage(ctx) // Передаем контекст с трассировкой
 	if err != nil {
 		return "", err
 	}

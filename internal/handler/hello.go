@@ -6,6 +6,7 @@ import (
 	"github.com/Irurnnen/gin-template/internal/models"
 	"github.com/Irurnnen/gin-template/internal/services"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
 )
 
@@ -35,9 +36,12 @@ func NewHelloHandler(service services.HelloServiceInterface, logger *zap.Logger)
 //	@Failure		500	{object}	models.HTTPError
 //	@Router			/hello [GET]
 func (h *HelloHandler) GetHelloMessage(c *gin.Context) {
+	ctx, span := otel.Tracer("handler").Start(c.Request.Context(), "GetHelloMessage")
+	defer span.End()
+
 	h.logger.Debug("Get hello message in handler")
 
-	message, err := h.service.GetHelloMessage()
+	message, err := h.service.GetHelloMessage(ctx) // Передаем контекст с трассировкой
 	switch err {
 	case nil:
 		break

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -24,7 +25,7 @@ func TestHelloRepository_GetHelloMessage(t *testing.T) {
 	repo := NewHelloRepository(sqlx.NewDb(db, "sqlmock"), logger)
 
 	// Call method
-	message, err := repo.GetHelloMessage()
+	message, err := repo.GetHelloMessage(context.TODO())
 
 	// Assertions
 	assert.NoError(t, err)

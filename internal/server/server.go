@@ -8,6 +8,7 @@ import (
 	"github.com/Irurnnen/gin-template/internal/config"
 	"github.com/Irurnnen/gin-template/internal/handler"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"go.uber.org/zap"
 )
 
@@ -22,15 +23,15 @@ type Server struct {
 }
 
 func NewServer(cfg *config.ServerConfig, logger *zap.Logger, helloHandler handler.HelloHandlerInterface) *Server {
-	// Create a new Gin router instance
 
+	// Create a new Gin router instance
 	router := gin.New()
 
 	// Add middlewares
 	router.Use(
+		otelgin.Middleware("gin-template"), // Указываем имя приложения
 		gin.Logger(),
 		gin.Recovery(),
-		// TODO: Add tracer
 	)
 
 	// Setup routes
