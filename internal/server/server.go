@@ -29,7 +29,7 @@ func NewServer(cfg *config.ServerConfig, logger *zap.Logger, helloHandler handle
 
 	// Add middlewares
 	router.Use(
-		otelgin.Middleware("gin-template"), // Указываем имя приложения
+		otelgin.Middleware(""), // Указываем имя приложения
 		gin.Logger(),
 		gin.Recovery(),
 	)

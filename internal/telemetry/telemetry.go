@@ -14,7 +14,9 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/log"
 	"go.opentelemetry.io/otel/sdk/metric"
+	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
 func SetupOTelSDK(ctx context.Context, config *config.OpenTelemetryConfig) (shutdown func(context.Context) error, err error) {
@@ -82,9 +84,6 @@ func newPropagator() propagation.TextMapPropagator {
 }
 
 func newTracerProvider(ctx context.Context, endpoint string) (*trace.TracerProvider, error) {
-	// traceExporter, err := stdouttrace.New(
-	// 	stdouttrace.WithPrettyPrint(),
-	// )
 	traceExporter, err := otlptracehttp.New(
 		ctx,
 		otlptracehttp.WithEndpointURL(endpoint),
@@ -94,10 +93,22 @@ func newTracerProvider(ctx context.Context, endpoint string) (*trace.TracerProvi
 		return nil, err
 	}
 
+	r, err := resource.Merge(
+		resource.Default(),
+		resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceName("gin-template"),
+		),
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	tracerProvider := trace.NewTracerProvider(
 		trace.WithBatcher(traceExporter,
-			// Default is 5s. Set to 1s for demonstrative purposes.
-			trace.WithBatchTimeout(time.Second)),
+			trace.WithBatchTimeout(time.Second),
+		),
+		trace.WithResource(r),
 	)
 
 	return tracerProvider, nil
