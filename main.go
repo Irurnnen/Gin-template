@@ -7,12 +7,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Irurnnen/gin-template/internal/config"
-	"github.com/Irurnnen/gin-template/internal/handler"
-	"github.com/Irurnnen/gin-template/internal/logger"
-	"github.com/Irurnnen/gin-template/internal/repository"
-	"github.com/Irurnnen/gin-template/internal/server"
-	"github.com/Irurnnen/gin-template/internal/services"
+	"github.com/exceptionteapots/gin-template/internal/config"
+	"github.com/exceptionteapots/gin-template/internal/handler"
+	"github.com/exceptionteapots/gin-template/internal/logger"
+	"github.com/exceptionteapots/gin-template/internal/repository"
+	"github.com/exceptionteapots/gin-template/internal/server"
+	"github.com/exceptionteapots/gin-template/internal/services"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

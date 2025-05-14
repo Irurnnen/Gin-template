@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/Irurnnen/gin-template/internal/repository"
+	"github.com/exceptionteapots/gin-template/internal/repository"
 	"go.uber.org/zap"
 )
 

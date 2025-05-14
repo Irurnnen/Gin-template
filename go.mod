@@ -1,4 +1,4 @@
-module github.com/Irurnnen/gin-template
+module github.com/exceptionteapots/gin-template
 
 go 1.24.2
 
