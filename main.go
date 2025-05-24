@@ -13,7 +13,7 @@ import (
 	"github.com/exceptionteapots/gin-template/internal/repository"
 	"github.com/exceptionteapots/gin-template/internal/server"
 	"github.com/exceptionteapots/gin-template/internal/services"
-	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 //	@title			Gin-template
@@ -31,29 +31,26 @@ func main() {
 	log.Info().Msg("Logger setup successfully")
 
 	// Initialize database
-	repo, err := repository.NewRepository(cfg.DatabaseConfig.GetDSN(), log)
+	dbPool, err := pgxpool.New(context.Background(), cfg.DatabaseConfig.GetDSN())
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to initialize database")
+		log.Fatal().Err(err).Msg("Failed to initialize database connection pool")
 	}
-	log.Info().Msg("Database setup successfully")
-	defer repo.Close()
+	log.Info().Msg("Database connection pool setup successfully")
+
+	// Initialize repository
+	helloRepoLogger := log.With().Str("repository", "hello").Logger()
+	helloRepo := repository.NewHelloRepository(dbPool, &helloRepoLogger)
+	log.Debug().Msg("Hello repository created successfully")
 
 	// Ping database
-	if err := repo.Ping(); err != nil {
+	if err := dbPool.Ping(context.Background()); err != nil {
 		log.Fatal().Str("host", cfg.DatabaseConfig.Host).Err(err).Msg("Failed to ping database")
 	}
 	log.Info().Msg("Database connection ping successfully")
 
 	// Initialize Hello handler
-	HelloService := services.NewHelloService(repo.HelloRepository, log)
+	HelloService := services.NewHelloService(helloRepo, log)
 	HelloHandler := handler.NewHelloHandler(HelloService, log)
-
-	// Setup gin level
-	if cfg.Debug {
-		gin.SetMode(gin.DebugMode)
-	} else {
-		gin.SetMode(gin.ReleaseMode)
-	}
 
 	// Setup server
 	srv := server.NewServer(cfg.ServerConfig, log, HelloHandler)
