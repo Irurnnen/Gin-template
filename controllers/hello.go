@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/exceptionteapots/gin-template/internal/domains"
-	"github.com/exceptionteapots/gin-template/internal/models"
+	"github.com/exceptionteapots/gin-template/domains"
+	"github.com/exceptionteapots/gin-template/models"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )

@@ -7,12 +7,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/exceptionteapots/gin-template/internal/config"
-	"github.com/exceptionteapots/gin-template/internal/controllers"
-	"github.com/exceptionteapots/gin-template/internal/domains"
-	"github.com/exceptionteapots/gin-template/internal/logger"
-	"github.com/exceptionteapots/gin-template/internal/repositories"
-	"github.com/exceptionteapots/gin-template/internal/server"
+	"github.com/exceptionteapots/gin-template/config"
+	"github.com/exceptionteapots/gin-template/controllers"
+	"github.com/exceptionteapots/gin-template/domains"
+	"github.com/exceptionteapots/gin-template/logger"
+	"github.com/exceptionteapots/gin-template/repositories"
+	"github.com/exceptionteapots/gin-template/server"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

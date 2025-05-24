@@ -1,7 +1,7 @@
 package domains
 
 import (
-	"github.com/exceptionteapots/gin-template/internal/repositories"
+	"github.com/exceptionteapots/gin-template/repositories"
 	"github.com/rs/zerolog"
 )
 

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/exceptionteapots/gin-template/internal/config"
-	"github.com/exceptionteapots/gin-template/internal/controllers"
+	"github.com/exceptionteapots/gin-template/config"
+	"github.com/exceptionteapots/gin-template/controllers"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
