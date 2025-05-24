@@ -5,7 +5,7 @@ import (
 
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
+	"github.com/rs/zerolog"
 )
 
 const DriverName = "pgx"
@@ -13,11 +13,11 @@ const DriverName = "pgx"
 type Repository struct {
 	// db              *sqlx.DB
 	dbPool          *pgxpool.Pool
-	logger          *zap.Logger
+	logger          *zerolog.Logger
 	HelloRepository HelloRepositoryInterface
 }
 
-func NewRepository(DSN string, logger *zap.Logger) (*Repository, error) {
+func NewRepository(DSN string, logger *zerolog.Logger) (*Repository, error) {
 	dbPool, err := pgxpool.New(context.Background(), DSN)
 	// db, err := sqlx.Connect(DriverName, DSN)
 	if err != nil {
@@ -32,7 +32,7 @@ func NewRepository(DSN string, logger *zap.Logger) (*Repository, error) {
 	}, nil
 }
 
-func NewRepositoryDB(dbPool *pgxpool.Pool, logger *zap.Logger) *Repository {
+func NewRepositoryDB(dbPool *pgxpool.Pool, logger *zerolog.Logger) *Repository {
 	return &Repository{
 		// db:              db,
 		dbPool:          dbPool,

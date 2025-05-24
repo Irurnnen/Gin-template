@@ -5,8 +5,9 @@ debug: true
 log_level: debug
 
 database:
-  host: localhost
+  host: template-db
   port: 5432
   user: user
   password: password
   dbname: mydb
+  secure: false

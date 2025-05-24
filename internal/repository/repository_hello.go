@@ -4,19 +4,19 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
+	"github.com/rs/zerolog"
 )
 
 type HelloRepository struct {
 	dbPool *pgxpool.Pool
-	logger *zap.Logger
+	logger *zerolog.Logger
 }
 
 type HelloRepositoryInterface interface {
 	GetHelloMessage() (string, error)
 }
 
-func NewHelloRepository(dbPool *pgxpool.Pool, logger *zap.Logger) *HelloRepository {
+func NewHelloRepository(dbPool *pgxpool.Pool, logger *zerolog.Logger) *HelloRepository {
 	return &HelloRepository{
 		dbPool: dbPool,
 		logger: logger,
@@ -28,7 +28,7 @@ func (r *HelloRepository) GetHelloMessage() (string, error) {
 	query := "SELECT 'Hello World' AS message"
 	err := r.dbPool.QueryRow(context.Background(), query).Scan(&message)
 	if err != nil {
-		zap.Error(err)
+		r.logger.Error().Err(err).Msg("Failed to get hello message")
 		return "", err
 	}
 	return message, nil
