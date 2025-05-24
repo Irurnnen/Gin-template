@@ -9,6 +9,8 @@ import (
 	"github.com/exceptionteapots/gin-template/controllers"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+	ginSwaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type ServerInterface interface {
@@ -21,17 +23,19 @@ type Server struct {
 	httpServer *http.Server
 }
 
-func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloController controllers.HelloControllerInterface) *Server {
+func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloController controllers.HelloControllerInterface, debug bool) *Server {
 	// Create a new Gin router instance
-
 	router := gin.New()
 
 	// Add middlewares
 	router.Use(
 		gin.Logger(),
 		gin.Recovery(),
-		// TODO: Add tracer
 	)
+
+	if debug {
+		router.GET("/swagger/*any", ginSwagger.WrapHandler(ginSwaggerFiles.Handler))
+	}
 
 	// Setup routes
 	v1 := router.Group("/v1")

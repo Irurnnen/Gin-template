@@ -1,5 +1,5 @@
-// go:build release
-//go:build release
+//go:build debug
+// +build debug
 
 package main
 
@@ -12,6 +12,7 @@ import (
 
 	"github.com/exceptionteapots/gin-template/config"
 	"github.com/exceptionteapots/gin-template/controllers"
+	_ "github.com/exceptionteapots/gin-template/docs"
 	"github.com/exceptionteapots/gin-template/domains"
 	"github.com/exceptionteapots/gin-template/logger"
 	"github.com/exceptionteapots/gin-template/repositories"
@@ -56,7 +57,7 @@ func main() {
 	HelloController := controllers.NewHelloController(HelloDomain, log)
 
 	// Setup server
-	srv := server.NewServer(cfg.ServerConfig, log, HelloController, false)
+	srv := server.NewServer(cfg.ServerConfig, log, HelloController, true)
 	log.Debug().Msg("Server created successfully")
 
 	// Launch application
