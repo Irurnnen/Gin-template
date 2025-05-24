@@ -29,3 +29,7 @@ gin-template.yml
 
 # IDE metadata
 .[Vv][Ss][Cc]ode*
+
+# docs generated files
+docs
+!docs/swagger.json
