@@ -9,5 +9,5 @@ database:
   port: 5432
   user: user
   password: password
-  dbname: mydb
+  db_name: mydb
   secure: false
