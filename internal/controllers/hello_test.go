@@ -1,4 +1,4 @@
-package handler
+package controllers
 
 import (
 	"net/http"
@@ -11,28 +11,27 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockHelloService struct {
+type MockHelloDomain struct {
 	mock.Mock
 }
 
-func (m *MockHelloService) GetHelloMessage() (string, error) {
+func (m *MockHelloDomain) GetHelloMessage() (string, error) {
 	args := m.Called()
 	return args.String(0), args.Error(1)
 }
 
-func TestHelloHandler_GetHelloMessage(t *testing.T) {
-	// Mock service
-	mockService := new(MockHelloService)
-	mockService.On("GetHelloMessage").Return("Hello World", nil)
+func TestHelloController_GetHelloMessage(t *testing.T) {
+	// Mock domain
+	mockDomain := new(MockHelloDomain)
+	mockDomain.On("GetHelloMessage").Return("Hello World", nil)
 
-	// Init handler
+	// Init controller
 	logger := zerolog.New(zerolog.ConsoleWriter{Out: nil})
-	// logger := zap.NewNop()
-	handler := NewHelloHandler(mockService, &logger)
+	controller := NewHelloController(mockDomain, &logger)
 
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-	router.GET("/v1/hello", handler.GetHelloMessage)
+	router.GET("/v1/hello", controller.GetHelloMessage)
 
 	// Perform request
 	w := httptest.NewRecorder()
@@ -42,5 +41,5 @@ func TestHelloHandler_GetHelloMessage(t *testing.T) {
 	// Assertions
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.JSONEq(t, `{"message":"Hello World"}`, w.Body.String())
-	mockService.AssertExpectations(t)
+	mockDomain.AssertExpectations(t)
 }

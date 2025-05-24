@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/exceptionteapots/gin-template/internal/config"
-	"github.com/exceptionteapots/gin-template/internal/handler"
+	"github.com/exceptionteapots/gin-template/internal/controllers"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -21,7 +21,7 @@ type Server struct {
 	httpServer *http.Server
 }
 
-func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloHandler handler.HelloHandlerInterface) *Server {
+func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloController controllers.HelloControllerInterface) *Server {
 	// Create a new Gin router instance
 
 	router := gin.New()
@@ -43,7 +43,7 @@ func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloHandler ha
 			})
 		}
 
-		v1.GET("/hello", helloHandler.GetHelloMessage)
+		v1.GET("/hello", helloController.GetHelloMessage)
 	}
 
 	logger.Debug().Msg("Routes initialized")

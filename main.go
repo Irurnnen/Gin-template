@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/exceptionteapots/gin-template/internal/config"
-	"github.com/exceptionteapots/gin-template/internal/handler"
+	"github.com/exceptionteapots/gin-template/internal/controllers"
+	"github.com/exceptionteapots/gin-template/internal/domains"
 	"github.com/exceptionteapots/gin-template/internal/logger"
-	"github.com/exceptionteapots/gin-template/internal/repository"
+	"github.com/exceptionteapots/gin-template/internal/repositories"
 	"github.com/exceptionteapots/gin-template/internal/server"
-	"github.com/exceptionteapots/gin-template/internal/services"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -39,7 +39,7 @@ func main() {
 
 	// Initialize repository
 	helloRepoLogger := log.With().Str("repository", "hello").Logger()
-	helloRepo := repository.NewHelloRepository(dbPool, &helloRepoLogger)
+	helloRepo := repositories.NewHelloRepository(dbPool, &helloRepoLogger)
 	log.Debug().Msg("Hello repository created successfully")
 
 	// Ping database
@@ -48,12 +48,12 @@ func main() {
 	}
 	log.Info().Msg("Database connection ping successfully")
 
-	// Initialize Hello handler
-	HelloService := services.NewHelloService(helloRepo, log)
-	HelloHandler := handler.NewHelloHandler(HelloService, log)
+	// Initialize Hello controller
+	HelloDomain := domains.NewHelloDomain(helloRepo, log)
+	HelloController := controllers.NewHelloController(HelloDomain, log)
 
 	// Setup server
-	srv := server.NewServer(cfg.ServerConfig, log, HelloHandler)
+	srv := server.NewServer(cfg.ServerConfig, log, HelloController)
 	log.Debug().Msg("Server created successfully")
 
 	// Launch application
