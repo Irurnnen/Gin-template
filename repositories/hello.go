@@ -13,7 +13,7 @@ type HelloRepository struct {
 }
 
 type HelloRepositoryInterface interface {
-	GetHelloMessage() (string, error)
+	GetHelloMessage() (*HelloEntity, error)
 }
 
 func NewHelloRepository(dbPool *pgxpool.Pool, logger *zerolog.Logger) *HelloRepository {
@@ -23,13 +23,13 @@ func NewHelloRepository(dbPool *pgxpool.Pool, logger *zerolog.Logger) *HelloRepo
 	}
 }
 
-func (r *HelloRepository) GetHelloMessage() (string, error) {
+func (r *HelloRepository) GetHelloMessage() (*HelloEntity, error) {
 	var message string
 	query := "SELECT 'Hello World' AS message"
 	err := r.dbPool.QueryRow(context.Background(), query).Scan(&message)
 	if err != nil {
 		r.logger.Error().Err(err).Msg("Failed to get hello message")
-		return "", err
+		return nil, err
 	}
-	return message, nil
+	return &HelloEntity{Message: message}, nil
 }

@@ -11,7 +11,7 @@ type HelloDomain struct {
 }
 
 type HelloDomainInterface interface {
-	GetHelloMessage() (string, error)
+	GetHelloMessage() (*HelloEntity, error)
 }
 
 func NewHelloDomain(repo repositories.HelloRepositoryInterface, logger *zerolog.Logger) *HelloDomain {
@@ -21,11 +21,13 @@ func NewHelloDomain(repo repositories.HelloRepositoryInterface, logger *zerolog.
 	}
 }
 
-func (s *HelloDomain) GetHelloMessage() (string, error) {
-	message, err := s.repo.GetHelloMessage()
+func (s *HelloDomain) GetHelloMessage() (*HelloEntity, error) {
+	entity, err := s.repo.GetHelloMessage()
 	if err != nil {
 		s.logger.Error().Err(err).Msg("Failed to get hello message from repository")
-		return "", err
+		return nil, err
 	}
-	return message, nil
+	return &HelloEntity{
+		Message: entity.Message,
+	}, nil
 }

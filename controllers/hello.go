@@ -37,7 +37,7 @@ func NewHelloController(domain domains.HelloDomainInterface, logger *zerolog.Log
 func (h *HelloController) GetHelloMessage(c *gin.Context) {
 	h.logger.Debug().Msg("Get hello message in controller")
 
-	message, err := h.domain.GetHelloMessage()
+	entity, err := h.domain.GetHelloMessage()
 	switch err {
 	case nil:
 		break
@@ -47,5 +47,5 @@ func (h *HelloController) GetHelloMessage(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, models.Message{Message: message})
+	c.JSON(http.StatusOK, models.Message{Message: entity.Message})
 }
