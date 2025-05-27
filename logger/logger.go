@@ -11,6 +11,7 @@ func init() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 }
 
+// New Get new entity of zerolog logger by logLevel
 func New(logLevel string) *zerolog.Logger {
 	level := zerolog.InfoLevel
 	switch logLevel {

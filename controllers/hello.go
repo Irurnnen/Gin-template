@@ -9,15 +9,18 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// HelloController responsible for processing HTTP requests related to the hello entity.
 type HelloController struct {
 	domain domains.HelloDomainInterface
 	logger *zerolog.Logger
 }
 
+// HelloControllerInterface defines interface of hello entity controller
 type HelloControllerInterface interface {
 	GetHelloMessage(c *gin.Context)
 }
 
+// NewHelloController creates new entity HelloController with domain and logger.
 func NewHelloController(domain domains.HelloDomainInterface, logger *zerolog.Logger) *HelloController {
 	return &HelloController{
 		domain: domain,
@@ -25,7 +28,7 @@ func NewHelloController(domain domains.HelloDomainInterface, logger *zerolog.Log
 	}
 }
 
-// GetHelloMessage godoc
+// GetHelloMessage process GET-request for get hello message
 //
 //	@Summary		Get Hello World message using database
 //	@Description	get hello world
@@ -37,7 +40,10 @@ func NewHelloController(domain domains.HelloDomainInterface, logger *zerolog.Log
 func (h *HelloController) GetHelloMessage(c *gin.Context) {
 	h.logger.Debug().Msg("Get hello message in controller")
 
+	// Get hello message in domain
 	entity, err := h.domain.GetHelloMessage()
+
+	// Process errors
 	switch err {
 	case nil:
 		break
@@ -47,5 +53,6 @@ func (h *HelloController) GetHelloMessage(c *gin.Context) {
 		return
 	}
 
+	// Send answer
 	c.JSON(http.StatusOK, models.Message{Message: entity.Message})
 }
