@@ -7,22 +7,26 @@ import (
 
 	"github.com/exceptionteapots/gin-template/config"
 	"github.com/exceptionteapots/gin-template/controllers"
+	"github.com/exceptionteapots/gin-template/server/middlewares"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	ginSwaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// ServerInterface defines interface of server of this project
 type ServerInterface interface {
 	Start() error
 	Shutdown() error
 }
 
+// Server responsible for up HTTP server
 type Server struct {
 	logger     *zerolog.Logger
 	httpServer *http.Server
 }
 
+// NewServer creates new entity of Server
 func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloController controllers.HelloControllerInterface, debug bool) *Server {
 	// Create a new Gin router instance
 	router := gin.New()
@@ -31,8 +35,11 @@ func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloController
 	router.Use(
 		gin.Logger(),
 		gin.Recovery(),
+		// Example middleware
+		middlewares.CorrelationIDMiddleware(),
 	)
 
+	// If debug is enabled add swagger endpoint
 	if debug {
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(ginSwaggerFiles.Handler))
 	}

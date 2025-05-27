@@ -124,7 +124,7 @@ docker-compose up --build
 ## TODO
 
 - [ ] Добавить кастомные ошибки для `service`.
-- [ ] Добавить пример middleware (Correlation-ID).
+- [x] Добавить пример middleware (Correlation-ID).
 - [ ] Добавление GitHub Actions.
 - [ ] Добавление OpenTelemetry.
     - [ ] Трейсы.
