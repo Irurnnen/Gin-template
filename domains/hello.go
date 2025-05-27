@@ -1,6 +1,8 @@
 package domains
 
 import (
+	"context"
+
 	"github.com/exceptionteapots/gin-template/repositories"
 	"github.com/rs/zerolog"
 )
@@ -12,6 +14,7 @@ type HelloDomain struct {
 
 type HelloDomainInterface interface {
 	GetHelloMessage() (*HelloEntity, error)
+	GetHelloMessageWithCache(ctx context.Context) (*HelloEntity, error)
 }
 
 func NewHelloDomain(repo repositories.HelloRepositoryInterface, logger *zerolog.Logger) *HelloDomain {
@@ -23,6 +26,17 @@ func NewHelloDomain(repo repositories.HelloRepositoryInterface, logger *zerolog.
 
 func (s *HelloDomain) GetHelloMessage() (*HelloEntity, error) {
 	entity, err := s.repo.GetHelloMessage()
+	if err != nil {
+		s.logger.Error().Err(err).Msg("Failed to get hello message from repository")
+		return nil, err
+	}
+	return &HelloEntity{
+		Message: entity.Message,
+	}, nil
+}
+
+func (s *HelloDomain) GetHelloMessageWithCache(ctx context.Context) (*HelloEntity, error) {
+	entity, err := s.repo.GetHelloMessageWithCache(ctx)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("Failed to get hello message from repository")
 		return nil, err

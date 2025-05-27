@@ -11,3 +11,12 @@ database:
   password: password
   db_name: mydb
   secure: false
+
+redis:
+  address: template-redis
+  # password: 
+  # user:
+  db: 0
+  max_retries: 3
+  dial_timeout: 30
+  timeout: 30

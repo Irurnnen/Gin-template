@@ -14,6 +14,7 @@ import (
 	"github.com/exceptionteapots/gin-template/controllers"
 	"github.com/exceptionteapots/gin-template/domains"
 	"github.com/exceptionteapots/gin-template/logger"
+	"github.com/exceptionteapots/gin-template/redis"
 	"github.com/exceptionteapots/gin-template/repositories"
 	"github.com/exceptionteapots/gin-template/server"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -40,16 +41,23 @@ func main() {
 	}
 	log.Info().Msg("Database connection pool setup successfully")
 
-	// Initialize repository
-	helloRepoLogger := log.With().Str("repository", "hello").Logger()
-	helloRepo := repositories.NewHelloRepository(dbPool, &helloRepoLogger)
-	log.Debug().Msg("Hello repository created successfully")
-
 	// Ping database
 	if err := dbPool.Ping(context.Background()); err != nil {
 		log.Fatal().Str("host", cfg.DatabaseConfig.Host).Err(err).Msg("Failed to ping database")
 	}
-	log.Info().Msg("Database connection ping successfully")
+	log.Info().Msg("Database connection established")
+
+	// Initialize redis
+	redisClient, err := redis.NewClient(context.Background(), *cfg.RedisConfig)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to initialize redis client connection")
+	}
+	log.Info().Msg("Redis client connection setup successfully")
+
+	// Initialize repository
+	helloRepoLogger := log.With().Str("repository", "hello").Logger()
+	helloRepo := repositories.NewHelloRepository(dbPool, &helloRepoLogger, redisClient)
+	log.Debug().Msg("Hello repository created successfully")
 
 	// Initialize Hello controller
 	HelloDomain := domains.NewHelloDomain(helloRepo, log)

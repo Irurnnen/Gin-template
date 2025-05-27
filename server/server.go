@@ -28,6 +28,13 @@ type Server struct {
 
 // NewServer creates new entity of Server
 func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloController controllers.HelloControllerInterface, debug bool) *Server {
+	// Set gin mode
+	if debug {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	// Create a new Gin router instance
 	router := gin.New()
 
@@ -55,6 +62,7 @@ func NewServer(cfg *config.ServerConfig, logger *zerolog.Logger, helloController
 		}
 
 		v1.GET("/hello", helloController.GetHelloMessage)
+		v1.GET("/hello-cached", helloController.GetHelloMessageWithCache)
 	}
 
 	logger.Debug().Msg("Routes initialized")
