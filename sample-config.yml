@@ -9,14 +9,11 @@ database:
   port: 5432
   user: user
   password: password
-  db_name: mydb
-  secure: false
+  dbname: mydb
 
 redis:
-  address: template-redis
-  # password: 
-  # user:
+  address: template-redis:6379
+  password: 
+  user:
   db: 0
   max_retries: 3
-  dial_timeout: 30
-  timeout: 30

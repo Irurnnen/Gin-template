@@ -73,14 +73,24 @@ func NewConfig() *Config {
 	viper.SetConfigType("yaml")
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Error().Err(err).Msg("Failed to read config, using example config")
-		return NewConfigExample()
+		log.Fatal().Err(err).Msg("Failed to read config, using example config")
 	}
 
 	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
-		log.Error().Err(err).Msg("Failed to unmarshal config, using example config")
-		return NewConfigExample()
+		log.Fatal().Err(err).Msg("Failed to unmarshal config, using example config")
+	}
+
+	if config.DatabaseConfig == nil {
+		log.Fatal().Msg("Database config is required but not set")
+	}
+
+	if config.ServerConfig == nil {
+		log.Fatal().Msg("Server config is required but not set")
+	}
+
+	if config.RedisConfig == nil {
+		log.Fatal().Msg("Redis config is required but not set")
 	}
 
 	return &config
