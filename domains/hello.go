@@ -13,8 +13,8 @@ type HelloDomain struct {
 }
 
 type HelloDomainInterface interface {
-	GetHelloMessage() (*HelloEntity, error)
-	GetHelloMessageWithCache(ctx context.Context) (*HelloEntity, error)
+	GetHelloMessage(context.Context) (*HelloEntity, error)
+	GetHelloMessageWithCache(context.Context) (*HelloEntity, error)
 }
 
 func NewHelloDomain(repo repositories.HelloRepositoryInterface, logger *zerolog.Logger) *HelloDomain {
@@ -24,8 +24,8 @@ func NewHelloDomain(repo repositories.HelloRepositoryInterface, logger *zerolog.
 	}
 }
 
-func (s *HelloDomain) GetHelloMessage() (*HelloEntity, error) {
-	entity, err := s.repo.GetHelloMessage()
+func (s *HelloDomain) GetHelloMessage(ctx context.Context) (*HelloEntity, error) {
+	entity, err := s.repo.GetHelloMessage(ctx)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("Failed to get hello message from repository")
 		return nil, err

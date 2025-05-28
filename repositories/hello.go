@@ -16,7 +16,7 @@ type HelloRepository struct {
 }
 
 type HelloRepositoryInterface interface {
-	GetHelloMessage() (*HelloEntity, error)
+	GetHelloMessage(context.Context) (*HelloEntity, error)
 	GetHelloMessageWithCache(context.Context) (*HelloEntity, error)
 }
 
@@ -28,10 +28,10 @@ func NewHelloRepository(dbPool *pgxpool.Pool, logger *zerolog.Logger, redis *red
 	}
 }
 
-func (r *HelloRepository) GetHelloMessage() (*HelloEntity, error) {
+func (r *HelloRepository) GetHelloMessage(ctx context.Context) (*HelloEntity, error) {
 	var message string
 	query := "SELECT 'Hello World' AS message"
-	err := r.dbPool.QueryRow(context.Background(), query).Scan(&message)
+	err := r.dbPool.QueryRow(ctx, query).Scan(&message)
 	if err != nil {
 		r.logger.Error().Err(err).Msg("Failed to get hello message")
 		return nil, err

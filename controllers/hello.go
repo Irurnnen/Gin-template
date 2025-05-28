@@ -42,7 +42,7 @@ func (h *HelloController) GetHelloMessage(c *gin.Context) {
 	h.logger.Debug().Msg("Get hello message in controller")
 
 	// Get hello message in domain
-	entity, err := h.domain.GetHelloMessage()
+	entity, err := h.domain.GetHelloMessage(c.Request.Context())
 
 	// Process errors
 	switch err {
